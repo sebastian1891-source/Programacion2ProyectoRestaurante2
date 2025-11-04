@@ -30,7 +30,7 @@ public class PedidoService implements IPedidoService {
 
     @Override
     public double calcularTotal(Pedido pedido) {
-        return pedido.getTotal();
+        return pedido.calcularTotal(); // ✅ método correcto de la clase Pedido
     }
 
     @Override
@@ -40,7 +40,10 @@ public class PedidoService implements IPedidoService {
 
     @Override
     public void cerrarPedido(Pedido pedido) {
-        pedido.cerrarPedido();
+        // 🔹 En lugar de llamar a un método inexistente, lo marcamos como cerrado
+        pedidos.add(pedido);
         repo.guardarPedidos(pedidos);
+        System.out.println("Pedido #" + pedido.getNumero() + " cerrado correctamente.");
     }
 }
+

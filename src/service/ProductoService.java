@@ -60,4 +60,17 @@ public class ProductoService implements IProductoService {
         p.setStock(p.getStock() - cantidad);
         repo.guardarProductos(productos);
     }
+
+    // 🔧 NUEVO MÉTODO: genera un ID único incremental
+    public int generarNuevoId() {
+        if (productos.isEmpty()) {
+            return 1;
+        } else {
+            return productos.stream()
+                    .mapToInt(Producto::getId)
+                    .max()
+                    .orElse(0) + 1;
+        }
+    }
 }
+
