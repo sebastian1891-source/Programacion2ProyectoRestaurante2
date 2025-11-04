@@ -4,16 +4,23 @@ import java.io.Serializable;
 
 // Representa una mesa del restaurante
 public class Mesa implements Serializable {
+
     public enum Estado { LIBRE, OCUPADA, RESERVADA }
 
     private int numero;
     private Estado estado;
     private String mesero;
 
+    // 🔹 Constructor completo
     public Mesa(int numero, Estado estado, String mesero) {
         this.numero = numero;
         this.estado = estado;
         this.mesero = mesero;
+    }
+
+    // 🔹 Constructor alternativo (estado por defecto LIBRE)
+    public Mesa(int numero, String mesero) {
+        this(numero, Estado.LIBRE, mesero);
     }
 
     // Getters y setters
@@ -29,4 +36,7 @@ public class Mesa implements Serializable {
         return "Mesa " + numero + " (" + estado + ") - Mesero: " + mesero;
     }
 }
+
+
+
 

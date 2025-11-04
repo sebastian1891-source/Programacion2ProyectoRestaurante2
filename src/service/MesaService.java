@@ -18,9 +18,10 @@ public class MesaService implements IMesaService {
         if (mesas.isEmpty()) inicializarMesas(10); // crea 10 mesas por defecto
     }
 
+    // 🔹 Crea mesas por defecto con estado LIBRE y mesero "Sin asignar"
     private void inicializarMesas(int cantidad) {
         for (int i = 1; i <= cantidad; i++) {
-            mesas.add(new Mesa(i, "LIBRE"));
+            mesas.add(new Mesa(i, Mesa.Estado.LIBRE, "Sin asignar"));
         }
         repo.guardarMesas(mesas);
     }
@@ -29,9 +30,13 @@ public class MesaService implements IMesaService {
     public void abrirMesa(int numero) throws MesaNoDisponibleException {
         Mesa mesa = obtenerMesa(numero);
         if (mesa == null) throw new MesaNoDisponibleException("Mesa no encontrada.");
-        if (!mesa.getEstado().equals("LIBRE"))
+
+        // Verificamos el estado usando el enum directamente
+        if (mesa.getEstado() != Mesa.Estado.LIBRE) {
             throw new MesaNoDisponibleException("La mesa " + numero + " no está disponible.");
-        mesa.setEstado("OCUPADA");
+        }
+
+        mesa.setEstado(Mesa.Estado.OCUPADA);
         repo.guardarMesas(mesas);
     }
 
@@ -39,7 +44,7 @@ public class MesaService implements IMesaService {
     public void cerrarMesa(int numero) {
         Mesa mesa = obtenerMesa(numero);
         if (mesa != null) {
-            mesa.setEstado("LIBRE");
+            mesa.setEstado(Mesa.Estado.LIBRE);
             repo.guardarMesas(mesas);
         }
     }
@@ -57,3 +62,5 @@ public class MesaService implements IMesaService {
         return new ArrayList<>(mesas);
     }
 }
+
+
