@@ -42,3 +42,4 @@ public abstract class Producto implements Serializable {
         return nombre + " ($" + precio + ") - Stock: " + stock;
     }
 }
+
