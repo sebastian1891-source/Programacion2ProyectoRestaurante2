@@ -11,7 +11,7 @@ public class Pedido implements Serializable {
     private Mesa mesa;
     private List<ItemPedido> items;
 
-    // 🔹 Clase interna para almacenar producto + cantidad
+    // Clase interna para almacenar producto + cantidad
     public static class ItemPedido implements Serializable {
         private Producto producto;
         private int cantidad;
@@ -29,7 +29,7 @@ public class Pedido implements Serializable {
         }
     }
 
-    // 🔹 Constructor principal (coherente con PedidoUI y PedidoService)
+    // Constructor principal (coherente con PedidoUI y PedidoService)
     public Pedido(int numero, Mesa mesa) {
         this.numero = numero;
         this.mesa = mesa;
@@ -41,12 +41,12 @@ public class Pedido implements Serializable {
     public Mesa getMesa() { return mesa; }
     public List<ItemPedido> getItems() { return items; }
 
-    // 🔹 Agrega un producto al pedido
+    // Agrega un producto al pedido
     public void agregarProducto(Producto producto, int cantidad) {
         items.add(new ItemPedido(producto, cantidad));
     }
 
-    // 🔹 Calcula el total del pedido
+    // Calcula el total del pedido
     public double calcularTotal() {
         double total = 0;
         for (ItemPedido item : items) {

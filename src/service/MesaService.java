@@ -7,19 +7,26 @@ import repository.MesaRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-// Implementa la lógica de las mesas
+/**
+ * Servicio que gestiona la lógica de las mesas del restaurante.
+ * Se asegura de que los cambios sean persistentes y visibles desde la UI.
+ */
 public class MesaService implements IMesaService {
 
-    private final MesaRepository repo = new MesaRepository();
-    private final List<Mesa> mesas;
+    private static final MesaRepository repo = new MesaRepository();
+    private static final List<Mesa> mesas = new ArrayList<>();
 
     public MesaService() {
-        this.mesas = repo.cargarMesas();
-        if (mesas.isEmpty()) inicializarMesas(10); // crea 10 mesas por defecto
+        // Solo carga las mesas una vez (manteniendo los datos en memoria compartida)
+        if (mesas.isEmpty()) {
+            mesas.addAll(repo.cargarMesas());
+            if (mesas.isEmpty()) inicializarMesas(10); // crea 10 mesas por defecto
+        }
     }
 
-    // 🔹 Crea mesas por defecto con estado LIBRE y mesero "Sin asignar"
+    /** Crea mesas iniciales con estado LIBRE y mesero "Sin asignar" */
     private void inicializarMesas(int cantidad) {
+        mesas.clear();
         for (int i = 1; i <= cantidad; i++) {
             mesas.add(new Mesa(i, Mesa.Estado.LIBRE, "Sin asignar"));
         }
@@ -29,15 +36,15 @@ public class MesaService implements IMesaService {
     @Override
     public void abrirMesa(int numero) throws MesaNoDisponibleException {
         Mesa mesa = obtenerMesa(numero);
-        if (mesa == null) throw new MesaNoDisponibleException("Mesa no encontrada.");
+        if (mesa == null)
+            throw new MesaNoDisponibleException("Mesa no encontrada.");
 
-        // Verificamos el estado usando el enum directamente
-        if (mesa.getEstado() != Mesa.Estado.LIBRE) {
+        if (mesa.getEstado() != Mesa.Estado.LIBRE)
             throw new MesaNoDisponibleException("La mesa " + numero + " no está disponible.");
-        }
 
         mesa.setEstado(Mesa.Estado.OCUPADA);
-        repo.guardarMesas(mesas);
+        repo.guardarMesas(mesas); // Persistimos el cambio
+        sincronizar(); // Recargamos el estado desde el archivo
     }
 
     @Override
@@ -46,6 +53,7 @@ public class MesaService implements IMesaService {
         if (mesa != null) {
             mesa.setEstado(Mesa.Estado.LIBRE);
             repo.guardarMesas(mesas);
+            sincronizar();
         }
     }
 
@@ -59,7 +67,15 @@ public class MesaService implements IMesaService {
 
     @Override
     public List<Mesa> listarMesas() {
+        sincronizar(); // siempre muestra el estado actualizado
         return new ArrayList<>(mesas);
+    }
+
+    /** Recarga las mesas desde el archivo para reflejar los cambios guardados */
+    private void sincronizar() {
+        List<Mesa> actualizadas = repo.cargarMesas();
+        mesas.clear();
+        mesas.addAll(actualizadas);
     }
 }
 

@@ -1,0 +1,106 @@
+@startuml
+' ======================================
+' UML del paquete model - Sistema Restaurante
+' ======================================
+
+' ---------- ENUM ----------
+enum EstadoMesa {
+  LIBRE
+  OCUPADA
+  RESERVADA
+}
+
+' ---------- CLASE ABSTRACTA ----------
+abstract class Producto {
+  - id : int
+  - nombre : String
+  - precio : double
+  - stock : int
+  - disponible : boolean
+  - imagenPath : String
+  + getId() : int
+  + getNombre() : String
+  + getPrecio() : double
+  + getStock() : int
+  + isDisponible() : boolean
+  + getImagenPath() : String
+  + setNombre(nombre : String) : void
+  + setPrecio(precio : double) : void
+  + setStock(stock : int) : void
+  + setDisponible(disponible : boolean) : void
+  + setImagenPath(imagenPath : String) : void
+  + reducirStock(cantidad : int) : void
+  + getTipo() : String
+  + toString() : String
+}
+
+' ---------- SUBCLASES DE PRODUCTO ----------
+class Comida {
+  + getTipo() : String
+}
+class Bebida {
+  + getTipo() : String
+}
+class Postre {
+  + getTipo() : String
+}
+
+Producto <|-- Comida
+Producto <|-- Bebida
+Producto <|-- Postre
+
+' ---------- CLASE MESA ----------
+class Mesa {
+  - numero : int
+  - estado : EstadoMesa
+  - mesero : String
+  + getNumero() : int
+  + getEstado() : EstadoMesa
+  + getMesero() : String
+  + setEstado(estado : EstadoMesa) : void
+  + setMesero(mesero : String) : void
+  + toString() : String
+}
+
+Mesa *-- EstadoMesa
+
+' ---------- CLASE PEDIDO ----------
+class Pedido {
+  - numero : int
+  - mesa : Mesa
+  - items : List<ItemPedido>
+  + getNumero() : int
+  + getMesa() : Mesa
+  + getItems() : List<ItemPedido>
+  + agregarProducto(producto : Producto, cantidad : int) : void
+  + calcularTotal() : double
+  + toString() : String
+}
+
+' ---------- CLASE INTERNA ITEMPEDIDO ----------
+class ItemPedido {
+  - producto : Producto
+  - cantidad : int
+  + getProducto() : Producto
+  + getCantidad() : int
+  + getSubtotal() : double
+}
+
+' ---------- CLASE PEDIDOITEM (EXTERNA) ----------
+class PedidoItem {
+  - producto : Producto
+  - cantidad : int
+  + getProducto() : Producto
+  + getCantidad() : int
+  + getSubtotal() : double
+  + toString() : String
+}
+
+' ---------- RELACIONES ----------
+Pedido *-- ItemPedido : contiene >
+PedidoItem --> Producto : refiere >
+Pedido --> Mesa : pertenece a >
+Mesa --> Pedido : registra >
+ItemPedido --> Producto : refiere >
+
+@enduml

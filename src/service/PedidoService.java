@@ -30,7 +30,7 @@ public class PedidoService implements IPedidoService {
 
     @Override
     public double calcularTotal(Pedido pedido) {
-        return pedido.calcularTotal(); // ✅ método correcto de la clase Pedido
+        return pedido.calcularTotal(); // método correcto de la clase Pedido
     }
 
     @Override
