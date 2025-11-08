@@ -77,6 +77,34 @@ public class ProductoService implements IProductoService {
         repo.guardarProductos(productos);
     }
 
+    public boolean eliminarPorNombre(String nombre) {
+        Producto productoAEliminar = null;
+
+        for (Producto p : productos) {
+            if (p.getNombre().equalsIgnoreCase(nombre)) {
+                productoAEliminar = p;
+                break;
+            }
+        }
+
+        if (productoAEliminar != null) {
+            productos.remove(productoAEliminar);
+            repo.guardarProductos(productos); // 💾 Guarda los cambios en el archivo
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public Producto buscarPorNombre(String nombre) {
+        for (Producto p : productos) { // suponiendo que la lista se llama 'productos'
+            if (p.getNombre().equalsIgnoreCase(nombre)) {
+                return p;
+            }
+        }
+        return null; // no encontrado
+    }
+
+
     // Genera un ID único incremental
     public int generarNuevoId() {
         if (productos.isEmpty()) {

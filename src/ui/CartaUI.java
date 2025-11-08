@@ -20,7 +20,6 @@ public class CartaUI extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Colores base
         Color fondo = new Color(20, 20, 20);
         Color rojoVinotinto = new Color(139, 0, 0);
 
@@ -32,12 +31,15 @@ public class CartaUI extends JFrame {
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 26));
         titulo.setForeground(rojoVinotinto);
 
+        // Botones
         JButton btnAgregar = new JButton("Agregar Producto");
+        JButton btnEditar = new JButton("Editar Producto");    // NUEVO
+        JButton btnEliminar = new JButton("Eliminar Producto"); // NUEVO
         JButton btnListar = new JButton("Mostrar Carta");
         JButton btnVolver = new JButton("Volver al Menú");
 
-        // Personalización de botones
-        for (JButton b : new JButton[]{btnAgregar, btnListar, btnVolver}) {
+        // Personalización
+        for (JButton b : new JButton[]{btnAgregar, btnEditar, btnEliminar, btnListar, btnVolver}) {
             b.setBackground(rojoVinotinto);
             b.setForeground(Color.WHITE);
             b.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -48,6 +50,8 @@ public class CartaUI extends JFrame {
         JPanel panelBotones = new JPanel();
         panelBotones.setBackground(fondo);
         panelBotones.add(btnAgregar);
+        panelBotones.add(btnEditar);   // agregado
+        panelBotones.add(btnEliminar); // agregado
         panelBotones.add(btnListar);
         panelBotones.add(btnVolver);
 
@@ -58,27 +62,27 @@ public class CartaUI extends JFrame {
 
         // Acciones
         btnAgregar.addActionListener(e -> agregarProducto());
+        btnEditar.addActionListener(e -> editarProducto());     // agregado
+        btnEliminar.addActionListener(e -> eliminarProducto()); // agregado
         btnListar.addActionListener(e -> mostrarProductos());
         btnVolver.addActionListener(e -> {
             dispose();
-            new MainMenuUI();
+            new MainMenuUI(); // vuelve al menú principal
         });
 
         setVisible(true);
     }
 
-    // Mostrar productos con imágenes
     private void mostrarProductos() {
         JPanel panelProductos = new JPanel();
         panelProductos.setBackground(new Color(35, 35, 35));
-        panelProductos.setLayout(new GridLayout(0, 4, 15, 15)); // 4 columnas
+        panelProductos.setLayout(new GridLayout(0, 4, 15, 15));
 
         for (Producto p : productoService.listarProductos()) {
             JPanel card = new JPanel(new BorderLayout());
             card.setBackground(new Color(50, 50, 50));
             card.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 2));
 
-            // Imagen
             JLabel lblImagen;
             if (p.getImagenPath() != null && !p.getImagenPath().isEmpty()) {
                 ImageIcon icon = new ImageIcon(p.getImagenPath());
@@ -89,7 +93,6 @@ public class CartaUI extends JFrame {
                 lblImagen.setForeground(Color.LIGHT_GRAY);
             }
 
-            // Texto
             JLabel lblNombre = new JLabel(p.getNombre(), SwingConstants.CENTER);
             lblNombre.setForeground(Color.WHITE);
             lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -113,7 +116,7 @@ public class CartaUI extends JFrame {
         repaint();
     }
 
-    // Agregar producto con imagen
+    // Agregar producto
     private void agregarProducto() {
         try {
             String nombre = JOptionPane.showInputDialog("Nombre del producto:");
@@ -127,7 +130,6 @@ public class CartaUI extends JFrame {
             double precio = Double.parseDouble(JOptionPane.showInputDialog("Precio:"));
             int stock = Integer.parseInt(JOptionPane.showInputDialog("Stock inicial:"));
 
-            // Seleccionar imagen (opcional)
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Seleccionar imagen del producto");
             fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (.jpg, .png)", "jpg", "png"));
@@ -144,20 +146,60 @@ public class CartaUI extends JFrame {
                 case "bebida" -> nuevo = new Bebida(id, nombre, precio, stock, true, imagenRuta);
                 case "postre" -> nuevo = new Postre(id, nombre, precio, stock, true, imagenRuta);
                 case "comida" -> nuevo = new Comida(id, nombre, precio, stock, true, imagenRuta);
-                default -> throw new DatoInvalidoException("Tipo de producto no válido. Debe ser Comida, Bebida o Postre.");
+                default -> throw new DatoInvalidoException("Tipo no válido. Debe ser Comida, Bebida o Postre.");
             }
 
             productoService.agregarProducto(nuevo);
-
             JOptionPane.showMessageDialog(this, "Producto agregado correctamente.");
             mostrarProductos();
 
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Debe ingresar valores numéricos válidos para precio y stock.", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (DatoInvalidoException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+    }
+
+    // Editar producto
+    private void editarProducto() {
+        String nombre = JOptionPane.showInputDialog("Ingrese el nombre del producto a editar:");
+        if (nombre == null || nombre.isBlank()) return;
+
+        Producto producto = productoService.buscarPorNombre(nombre);
+        if (producto == null) {
+            JOptionPane.showMessageDialog(this, "Producto no encontrado.");
+            return;
+        }
+
+        try {
+            String nuevoPrecioStr = JOptionPane.showInputDialog("Nuevo precio (actual: " + producto.getPrecio() + "):");
+            if (nuevoPrecioStr != null && !nuevoPrecioStr.isBlank()) {
+                producto.setPrecio(Double.parseDouble(nuevoPrecioStr));
+            }
+
+            String nuevoStockStr = JOptionPane.showInputDialog("Nuevo stock (actual: " + producto.getStock() + "):");
+            if (nuevoStockStr != null && !nuevoStockStr.isBlank()) {
+                producto.setStock(Integer.parseInt(nuevoStockStr));
+            }
+
+            productoService.agregarProducto(producto); // guarda actualizado
+            JOptionPane.showMessageDialog(this, "Producto actualizado correctamente.");
+            mostrarProductos();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al editar: " + e.getMessage());
+        }
+    }
+
+    // Eliminar producto
+    private void eliminarProducto() {
+        String nombre = JOptionPane.showInputDialog("Ingrese el nombre del producto a eliminar:");
+        if (nombre == null || nombre.isBlank()) return;
+
+        boolean eliminado = productoService.eliminarPorNombre(nombre);
+        if (eliminado) {
+            JOptionPane.showMessageDialog(this, "Producto eliminado correctamente.");
+            mostrarProductos();
+        } else {
+            JOptionPane.showMessageDialog(this, "Producto no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -165,7 +207,3 @@ public class CartaUI extends JFrame {
         SwingUtilities.invokeLater(CartaUI::new);
     }
 }
-
-
-
-
