@@ -23,3 +23,14 @@ Resumiendo: Es como la caja de herramientas del proyecto. Contiene funciones y c
 
 UML: El paquete uml del proyecto se usa para guardar los diagramas UML (como clases, casos de uso, secuencia, etc.) que representan visualmente la estructura y funcionamiento del sistema. Es el paquete donde se documenta 
 gráficamente el diseño del proyecto.
+
+
+
+Diseño Visual: Se utiliza un fondo oscuro para todas las ventanas y botones en rojo vinotinto con texto blanco, siguiendo una paleta coherente en todo el sistema.
+Las mesas y productos se muestran en tarjetas cuadradas, con colores indicativos del estado (por ejemplo, mesas libres en verde y ocupadas en rojo), ofreciendo una visualización clara y rápida del estado actual.
+
+Flujo del Programa: El usuario abre el menú principal, desde donde puede acceder a las distintas funcionalidades.
+En Gestión de Mesas, el usuario puede abrir, cerrar y visualizar mesas. Las acciones se reflejan inmediatamente en la interfaz mediante cambios de color y texto.
+En Pedidos y Pagos, se selecciona una mesa para crear un pedido, se agregan productos desde la carta, y se puede cerrar el pedido, calculando el total a pagar.
+En Gestión de Carta / Menú, se pueden agregar, editar y eliminar, mostrando los mismos tarjetas visuales que en la gestión de mesas para mantener consistencia visual.
+Todas las acciones están acompañadas de mensajes emergentes (JOptionPane) para informar al usuario sobre el éxito o error de la operación, garantizando un flujo de trabajo guiado y amigable.
