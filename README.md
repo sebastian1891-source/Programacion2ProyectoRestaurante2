@@ -2,7 +2,7 @@ Proyecto Sistema de Gestión de Restaurante - Ronny Carrasco, Sebastián Camacho
 
 Paquetes:
 
-Model: El paquete model contiene las clases que representan los objetos del mundo real de tu aplicación, es decir, el modelo de datos del sistema.
+Model: El paquete model contiene las clases que representan los objetos del mundo real de la aplicación, es decir, el modelo de datos del sistema.
 Estos objetos suelen tener atributos (datos) y métodos (comportamientos), pero no lógica de negocio compleja ni interfaz gráfica.
 Sirven como el “esqueleto” o la estructura central del programa.
 
